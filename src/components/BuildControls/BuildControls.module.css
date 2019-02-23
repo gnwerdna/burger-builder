@@ -1,6 +1,6 @@
-.BuilderControls {
+.BuildControls {
     width: 100%;
-    background-color: #cf8f2e;
+    background-color: #cf8f2e !important;
     display: flex;
     flex-direction: column;
     align-items: center;
