@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Aux from '../../hoc/Aux/Aux';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
-
+import axios from '../../axios-orders'
 const INGREDIENTS_PRICE = {
     salad: .5,
     cheese: .4,
@@ -33,7 +33,7 @@ class BurgerBuilder extends Component {
             .reduce((sum, el) => {
                 return sum + el;
             }, 0);
-        this.setState({purchasable: sum > 0});
+        this.setState({ purchasable: sum > 0 });
     }
 
     addIngredientHandler = (type) => {
@@ -47,7 +47,7 @@ class BurgerBuilder extends Component {
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice + priceAddition;
 
-        this.setState ({
+        this.setState({
             totalPrice: newPrice,
             ingredients: updatedIngredient
         });
@@ -56,7 +56,7 @@ class BurgerBuilder extends Component {
 
     removeIngredientHandler = (type) => {
         const oldCount = this.state.ingredients[type];
-        if(oldCount === 0) {
+        if (oldCount === 0) {
             return;
         }
         const updateCount = oldCount - 1;
@@ -68,7 +68,7 @@ class BurgerBuilder extends Component {
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice - priceDeduction;
 
-        this.setState ({
+        this.setState({
             totalPrice: newPrice,
             ingredients: updatedIngredient
         });
@@ -76,19 +76,39 @@ class BurgerBuilder extends Component {
     }
 
     purchaseHandler = () => {
-        this.setState({purchasing: true});
+        this.setState({ purchasing: true });
     }
 
     purchaseCancelledHandler = () => {
-        this.setState({purchasing: false});
+        this.setState({ purchasing: false });
     }
 
     purchaseContinuedHandler = () => {
-        alert('you continued');
+        // alert('you continued');
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice,
+            customer: {
+                name: 'gn werdna',
+                address: {
+                    street: 'test street',
+                    country: 'vietnam'
+                },
+                email: 'test@test'
+            },
+            deliveryMethod: 'fastest'
+        }
+        axios.post('/orders.json', order)
+            .then(res => {
+                console.log('success');
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
-    render () {
-        const disabledInfo={
+    render() {
+        const disabledInfo = {
             ...this.state.ingredients
         };
 
@@ -100,16 +120,16 @@ class BurgerBuilder extends Component {
                 <Modal
                     modalClosed={this.purchaseCancelledHandler}
                     show={this.state.purchasing}>
-                    <OrderSummary 
+                    <OrderSummary
                         ingredients={this.state.ingredients}
                         cancelledHandler={this.purchaseCancelledHandler}
                         continuedHandler={this.purchaseContinuedHandler}
-                        totalPrice={this.state.totalPrice}/>
+                        totalPrice={this.state.totalPrice} />
                 </Modal>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls
-                    ingredientAdded = {this.addIngredientHandler}
-                    ingredientRemoved = {this.removeIngredientHandler}
+                    ingredientAdded={this.addIngredientHandler}
+                    ingredientRemoved={this.removeIngredientHandler}
                     disabled={disabledInfo}
                     purchasable={this.state.purchasable}
                     totalPrice={this.state.totalPrice}
