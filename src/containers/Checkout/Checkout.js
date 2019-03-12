@@ -1,5 +1,6 @@
 import React from 'react'
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary'
+import { URLSearchParams } from 'url';
 class Checkout extends React.Component {
     state = {
         ingredients: {
@@ -9,10 +10,33 @@ class Checkout extends React.Component {
             bacon: 1
         }
     }
+
+    componentDidMount() {
+        const query = new URLSearchParams(this.props.location.search);
+        const ingredients = {};
+        for(let param in query.entries()) {
+            // ['salad', '1']
+            ingredients[param[0]] = +param[1];
+        }
+
+        this.setState({ingredients: ingredients});
+    }
+
+    checkoutCancelledHandler = () => {
+        this.props.history.goBack();
+    }
+
+    checkoutContinuedHandler = () => {
+        this.props.history.replace('/checkout/contact-data');
+    }
+
     render() {
         return (
             <div>
-                <CheckoutSummary ingredients={this.state.ingredients} />
+                <CheckoutSummary 
+                    ingredients={this.state.ingredients}
+                    checkoutCancelled={this.checkoutCancelledHandler}
+                    checkoutContinued={this.checkoutContinuedHandler} />
             </div>
         );
     }

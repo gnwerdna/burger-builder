@@ -2,6 +2,7 @@ import React from 'react';
 import classes from './Burger.module.css'
 import BurgerIngredient from '../Burger/Burgeringredient/Bugeringredient';
 const burger = (props) => {
+    console.log(props);
     let transformIngredients = Object.keys(props.ingredients)
         // console.log(transformIngredients);
         .map(igKey => {
