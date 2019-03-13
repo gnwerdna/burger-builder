@@ -30,6 +30,7 @@ class ContactData extends React.Component {
             },
             deliveryMethod: 'fastest'
         }
+        console.log(order);
         axios.post('/orders.json', order)
             .then(res => {
                 this.setState({
@@ -42,7 +43,6 @@ class ContactData extends React.Component {
                     loading: false
                 })
             });
-        console.log(this.props.ingredients);
     }
 
     render() {
