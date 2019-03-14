@@ -56,18 +56,14 @@ class ContactData extends React.Component {
     orderHandler = (event) => {
         event.preventDefault();
         this.setState({ loading: true });
+        const orderData = {};
+        for (let orderKey in this.state.orderForm) {
+            orderData[orderKey] = this.state.orderForm[orderKey].value;
+        }
         const order = {
             ingredients: this.props.ingredients,
-            price: this.props.price,
-            customer: {
-                name: 'gn werdna',
-                address: {
-                    street: 'test street',
-                    country: 'vietnam'
-                },
-                email: 'test@test'
-            },
-            deliveryMethod: 'fastest'
+            price: Number.parseFloat(this.props.price).toFixed(2),
+            order: orderData
         }
         console.log(order);
         axios.post('/orders.json', order)
