@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import Button from '../../../components/UI/Button/Button'
 import classes from './ContactData.module.css'
 import Spinner from './../../../components/UI/Spinner/Spinner';
@@ -85,7 +86,7 @@ class ContactData extends React.Component {
             orderData[orderKey] = this.state.orderForm[orderKey].value;
         }
         const order = {
-            ingredients: this.props.ingredients,
+            ingredients: this.props.ings, 
             price: Number.parseFloat(this.props.price).toFixed(2),
             order: orderData
         }
@@ -183,4 +184,11 @@ class ContactData extends React.Component {
     }
 }
 
-export default ContactData
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        price: state.totalPrice
+    }
+}
+
+export default connect(mapStateToProps)(ContactData); 

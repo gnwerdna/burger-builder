@@ -8,12 +8,11 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import axios from '../../axios-orders'
 import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
-import * as actionTypes from '../../store/actions';
+import * as burgerBuilderActions from '../../store/actions/index';
 
 
 class BurgerBuilder extends Component {
     state = {
-        purchasable: false,
         purchasing: false,
         loading: false,
         error: false
@@ -21,15 +20,15 @@ class BurgerBuilder extends Component {
 
     componentDidMount() {
         // console.log(this.props);
-        // axios.get('https://my-burger-project-c7a98.firebaseio.com/ingredients.json')
-        //     .then(res => {
-        //         this.setState({
-        //             ingredients: res.data
-        //         })
-        //     })
-        //     .catch(err => {
-        //         this.setState({error: true});
-        //     });
+        axios.get('https://my-burger-project-c7a98.firebaseio.com/ingredients.json')
+            .then(res => {
+                this.setState({
+                    ingredients: res.data
+                })
+            })
+            .catch(err => {
+                this.setState({error: true});
+            });
     }
     updatePurchaseState = (ingredients) => {
         const sum = Object.keys(ingredients)
@@ -39,7 +38,7 @@ class BurgerBuilder extends Component {
             .reduce((sum, el) => {
                 return sum + el;
             }, 0);
-        this.setState({ purchasable: sum > 0 });
+        return sum > 0;
     }
 
     
@@ -53,18 +52,7 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinuedHandler = () => {
-        // alert('you continued');
-       
-        const queryParams = [];
-        for(let i in this.state.ingredients) {
-            queryParams.push(encodeURIComponent(i) + "=" + encodeURIComponent(this.state.ingredients[i]));
-        }
-        queryParams.push('price=' + this.state.totalPrice);
-        const queryString = queryParams.join('&');
-        this.props.history.push({
-            pathname: '/checkout',
-            search: '?' + queryString   
-        });
+        this.props.history.push('/checkout');
     }
 
     render() {
@@ -85,7 +73,7 @@ class BurgerBuilder extends Component {
                         ingredientAdded={this.props.onIngredientAdded}
                         ingredientRemoved={this.props.onIngredientRemoved}
                         disabled={disabledInfo}
-                        purchasable={this.state.purchasable}
+                        purchasable={this.updatePurchaseState(this.props.ings)}
                         totalPrice={this.props.price}
                         ordered={this.purchaseHandler}
                     />
@@ -121,8 +109,8 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
     return {
-        onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName }),
-        onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName })
+        onIngredientAdded: (ingName) => dispatch(burgerBuilderActions.addIngredient(ingName)),
+        onIngredientRemoved: (ingName) => dispatch(burgerBuilderActions.removeIngredient(ingName))
     }
 }
 
