@@ -20,15 +20,6 @@ class BurgerBuilder extends Component {
 
     componentDidMount() {
         // console.log(this.props);
-        axios.get('https://my-burger-project-c7a98.firebaseio.com/ingredients.json')
-            .then(res => {
-                this.setState({
-                    ingredients: res.data
-                })
-            })
-            .catch(err => {
-                this.setState({error: true});
-            });
     }
     updatePurchaseState = (ingredients) => {
         const sum = Object.keys(ingredients)
