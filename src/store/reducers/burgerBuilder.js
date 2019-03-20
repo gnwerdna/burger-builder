@@ -17,7 +17,7 @@ const INGREDIENTS_PRICE = {
 };
 
 const reducer = (state = initialState, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case actionTypes.ADD_INGREDIENT:
             return {
                 ...state,
@@ -27,7 +27,7 @@ const reducer = (state = initialState, action) => {
                 },
                 totalPrice: state.totalPrice + INGREDIENTS_PRICE[action.ingredientName]
             };
-        
+
         case actionTypes.REMOVE_INGREDIENT:
             return {
                 ...state,
@@ -37,7 +37,25 @@ const reducer = (state = initialState, action) => {
                 },
                 totalPrice: state.totalPrice - INGREDIENTS_PRICE[action.ingredientName]
             };
-        default: 
+
+        case actionTypes.SET_INGREDIENTS:
+            return {
+                ...state,
+                ingredients: {
+                    salad: action.ingredients.salad,
+                    bacon: action.ingredients.bacon,
+                    meat: action.ingredients.meat,
+                    cheese: action.ingredients.cheese
+                },
+                error: false
+            };
+
+        case actionTypes.FETCH_INGREDIENTS_FAILED:
+            return {
+                ...state,
+                error: true
+            };
+        default:
             return state;
     }
 }
