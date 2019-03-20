@@ -11,7 +11,6 @@ class Orders extends React.Component {
         this.props.onFetchOrders();
     }
 
-
     render() {
         let orders = <Spinner />;
         if (!this.props.loading) {
