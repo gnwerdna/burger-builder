@@ -28,15 +28,13 @@ class Checkout extends React.Component {
                 </div>
             );
         }
-        return (
-            { summary }
-        );
+        return summary ;
     }
 }
 
 const mapStateToProps = state => {
     return {
-        ings: state.ingredients
+        ings: state.burgerBuider.ingredients
     }
 }
 
