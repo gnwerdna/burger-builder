@@ -91,7 +91,7 @@ class ContactData extends React.Component {
             order: orderData
         }
 
-        this.props.onOrderBurger(order);
+        this.props.onOrderBurger(order, this.props.token);
     }
 
     checkValidity(value, rules) {
@@ -166,7 +166,7 @@ class ContactData extends React.Component {
                         touched={formElement.config.touched} />
                 ))}
                 <Button
-                    disabled={!this.state.orderForm.formIsValid}
+                    disabled={!this.state.formIsValid}
                     btnType="Success"
                     clicked={this.orderHandler}>ORDER</Button>
             </form>
@@ -187,13 +187,14 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
     }
 }
 
