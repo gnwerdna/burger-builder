@@ -7,6 +7,7 @@ import axios from './../../../axios-orders';
 import Input from './../../../components/UI/Input/Input';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/index';
+import { updatedObject, checkValidity } from '../../../shared/utility';
 class ContactData extends React.Component {
     state = {
         orderForm: {
@@ -46,7 +47,8 @@ class ContactData extends React.Component {
                 validation: {
                     required: true,
                     minLength: 5,
-                    maxLength: 5
+                    maxLength: 5,
+                    isNumeric: true
                 },
                 valid: false,
                 touched: false
@@ -59,7 +61,8 @@ class ContactData extends React.Component {
                 },
                 value: '',
                 validation: {
-                    required: true
+                    required: true,
+                    isEmail: true
                 },
                 valid: false,
                 touched: false
@@ -72,8 +75,9 @@ class ContactData extends React.Component {
                         { value: 'cheapest', displayValue: 'Cheapest' }
                     ]
                 },
-                value: '',
-                valid: true
+                value: 'fastest',
+                valid: true,
+                validation: {}
             }
         },
         formIsValid: false,
@@ -95,48 +99,16 @@ class ContactData extends React.Component {
         this.props.onOrderBurger(order, this.props.token);
     }
 
-    checkValidity(value, rules) {
-        let isValid = true;
-        if (!rules) {
-            return true;
-        }
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        if (rules.isEmail) {
-            const pattern = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-            isValid = pattern.test(value) && isValid;
-        }
-
-        if (rules.isNumeric) {
-            const pattern = /^\d+$/;
-            isValid = pattern.test(value) && isValid;
-        }
-        return isValid;
-    }
-
     inputChangeHandler = (event, inputIdentify) => {
+        const updateFormElement = updatedObject(this.state.orderForm[inputIdentify], {
+            value: event.target.value,
+            valid: checkValidity(event.target.value, this.state.orderForm[inputIdentify].validation),
+            touched: true
+        });
 
-        const updateOrderForm = {
-            ...this.state.orderForm
-        }
-
-        const updateFormElement = {
-            ...updateOrderForm[inputIdentify]
-        }
-        updateFormElement.value = event.target.value;
-        updateFormElement.valid = this.checkValidity(updateFormElement.value, updateFormElement.validation);
-        updateFormElement.touched = true;
+        const updateOrderForm = updatedObject(this.state.orderForm, {
+            [inputIdentify]: updateFormElement
+        });
         updateOrderForm[inputIdentify] = updateFormElement;
         let formIsValid = true;
         for (let inputIdentifier in updateFormElement) {
@@ -154,7 +126,7 @@ class ContactData extends React.Component {
             })
         }
         let form = (
-            <form>
+            <form onSubmit={this.orderHandler}>
                 {formElementsArray.map(formElement => (
                     <Input
                         key={formElement.id}
@@ -168,8 +140,7 @@ class ContactData extends React.Component {
                 ))}
                 <Button
                     disabled={!this.state.formIsValid}
-                    btnType="Success"
-                    clicked={this.orderHandler}>ORDER</Button>
+                    btnType="Success">ORDER</Button>
             </form>
         );
         if (this.props.loading) {
