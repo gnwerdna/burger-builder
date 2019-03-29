@@ -13,9 +13,7 @@ import * as burgerBuilderActions from '../../store/actions/index';
 
 export class BurgerBuilder extends Component {
     state = {
-        purchasing: false,
-        loading: false,
-        error: false
+        purchasing: false
     }
 
     componentDidMount() {
@@ -44,7 +42,7 @@ export class BurgerBuilder extends Component {
 
     }
 
-    purchaseCancelledHandler = () => {
+    purchaseCanceledHandler = () => {
         this.setState({ purchasing: false });
     }
 
@@ -79,7 +77,7 @@ export class BurgerBuilder extends Component {
             );
             orderSummary = <OrderSummary
                 ingredients={this.props.ings}
-                cancelledHandler={this.purchaseCancelledHandler}
+                canceledHandler={this.purchaseCanceledHandler}
                 continuedHandler={this.purchaseContinuedHandler}
                 totalPrice={this.props.price} />
         }
@@ -90,7 +88,7 @@ export class BurgerBuilder extends Component {
         return (
             <Aux>
                 <Modal
-                    modalClosed={this.purchaseCancelledHandler}
+                    modalClosed={this.purchaseCanceledHandler}
                     show={this.state.purchasing}>
                     {orderSummary}
                 </Modal>
